@@ -8,7 +8,7 @@ from config import settings
 Base = declarative_base()
 metadata = Base.metadata
 
-engine = create_async_engine(settings.database.DB_URL)
+engine = create_async_engine(settings.db.db_url)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
