@@ -9,11 +9,13 @@ class DatabaseSettings(BaseSettings):
     db_user: str = Field("postgres", env="DB_USER")
     db_pass: str = Field("root", env="DB_PASS")
 
-    db_url = f"postgresql+asyncpg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+    @property
+    def db_url(self) -> str:
+        return f"postgresql+asyncpg://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_name}"
 
 
 class Settings(BaseSettings):
-    db = DatabaseSettings()
+    db: DatabaseSettings = DatabaseSettings()
 
 
 settings = Settings()
