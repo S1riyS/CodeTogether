@@ -9,6 +9,6 @@ class UserModel(IDModelMixin, TimeModelMixin, Base):
 
     email: Mapped[str] = mapped_column(unique=True)
     hashed_password: Mapped[str]
-    username: Mapped[str]
-    avatar_url: Mapped[str] = mapped_column(nullable=True, default=True)
-    is_verified: Mapped[bool] = mapped_column(default=True)
+    username: Mapped[str] = mapped_column(unique=True)
+    avatar_url: Mapped[str] = mapped_column(nullable=True)
+    is_verified: Mapped[bool] = mapped_column(default=False)
