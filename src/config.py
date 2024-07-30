@@ -14,8 +14,15 @@ class DatabaseSettings(BaseSettings):
         return f"postgresql+asyncpg://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_name}"
 
 
+class AuthSettings(BaseSettings):
+    secret_key: str = Field("super_secret_key", env="SECRET")
+    algorithm: str = Field("HS256", env="HASH_ALGORITHM")
+    access_token_expire_minutes: int = Field(30, env='ACCESS_TOKEN_EXPIRE_MINUTES')
+
+
 class Settings(BaseSettings):
     db: DatabaseSettings = DatabaseSettings()
+    auth: AuthSettings = AuthSettings()
 
 
 settings = Settings()
