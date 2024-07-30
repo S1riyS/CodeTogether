@@ -13,6 +13,9 @@ sqlalchemy = "^2.0.31"
 alembic = "^1.13.2"
 asyncpg = "^0.29.0"
 pydantic-settings = "^2.3.4"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = "^1.7.4"
+bcrypt = "^4.2.0"
 
 
 [build-system]
