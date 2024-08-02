@@ -1,4 +1,5 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 
 from routers.depenencies import SessionDep
 from schemas.auth import TokenSchema, LoginSchema
@@ -9,7 +10,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/login", response_model=TokenSchema)
-async def login(data: LoginSchema, session: SessionDep):
+async def login(session: SessionDep, data: OAuth2PasswordRequestForm = Depends()):
     auth_service = AuthService(session)
     return await auth_service.login(data)
 
