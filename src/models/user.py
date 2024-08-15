@@ -1,7 +1,12 @@
-from sqlalchemy.orm import mapped_column, Mapped
+import typing
+
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from core.database import Base
 from .utils.mixins import IDModelMixin, TimeModelMixin
+
+if typing.TYPE_CHECKING:
+    from .project import ProjectModel
 
 
 class UserModel(IDModelMixin, TimeModelMixin, Base):
@@ -12,3 +17,5 @@ class UserModel(IDModelMixin, TimeModelMixin, Base):
     username: Mapped[str] = mapped_column(unique=True)
     avatar_url: Mapped[str] = mapped_column(nullable=True)
     is_verified: Mapped[bool] = mapped_column(default=False)
+
+    projects: Mapped["ProjectModel"] = relationship(back_populates="owner")
