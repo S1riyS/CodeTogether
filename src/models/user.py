@@ -1,11 +1,11 @@
-import typing
+from typing import TYPE_CHECKING, List
 
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from core.database import Base
 from .utils.mixins import IDModelMixin, TimeModelMixin
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from .project import ProjectModel
 
 
@@ -18,4 +18,4 @@ class UserModel(IDModelMixin, TimeModelMixin, Base):
     avatar_url: Mapped[str] = mapped_column(nullable=True)
     is_verified: Mapped[bool] = mapped_column(default=False)
 
-    projects: Mapped["ProjectModel"] = relationship(back_populates="owner")
+    own_projects: Mapped[List["ProjectModel"]] = relationship(back_populates="owner")
