@@ -9,8 +9,7 @@ from core.database import Base
 from models.utils.mixins import IDModelMixin, TimeModelMixin
 
 if TYPE_CHECKING:
-    from models import UserModel
-    from models.position import PositionModel
+    from models import UserModel, PositionModel
 
 
 class Difficulty(Enum):
