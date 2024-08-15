@@ -20,8 +20,8 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType], ABC
         obj = await self.get_by_id(id_)
         return obj is not None
 
-    async def create(self, obj: CreateSchemaType) -> Optional[ModelType]:
-        db_obj: ModelType = self._model(**obj.dict())
+    async def create(self, obj: CreateSchemaType, **kwargs) -> Optional[ModelType]:
+        db_obj: ModelType = self._model(**obj.dict(), **kwargs)
         self._session.add(db_obj)
 
         try:
