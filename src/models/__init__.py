@@ -1,2 +1,3 @@
 from core.database import Base
-from .user import UserModel
+from models.project import ProjectModel
+from models.user import UserModel
