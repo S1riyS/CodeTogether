@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, List
 from uuid import UUID
 
 from sqlalchemy import ForeignKey
@@ -9,6 +9,7 @@ from models.utils.mixins import IDModelMixin
 
 if TYPE_CHECKING:
     from models import ProjectModel
+    from models.associations import UserPositionAssociation
 
 
 class PositionModel(Base, IDModelMixin):
@@ -20,3 +21,4 @@ class PositionModel(Base, IDModelMixin):
     project_id: Mapped[UUID] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"))
 
     project: Mapped["ProjectModel"] = relationship(back_populates="positions")
+    users_details: Mapped[List["UserPositionAssociation"]] = relationship(back_populates="product")
