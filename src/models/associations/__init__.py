@@ -1,1 +1,1 @@
-from .user_position import UserPositionAssociation
+from .application import ApplicationModel

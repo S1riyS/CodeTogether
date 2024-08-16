@@ -7,7 +7,7 @@ from models.utils.mixins import IDModelMixin, TimeModelMixin
 
 if TYPE_CHECKING:
     from models import ProjectModel
-    from models.associations import UserPositionAssociation
+    from models.associations import ApplicationModel
 
 
 class UserModel(IDModelMixin, TimeModelMixin, Base):
@@ -20,4 +20,4 @@ class UserModel(IDModelMixin, TimeModelMixin, Base):
     is_verified: Mapped[bool] = mapped_column(default=False)
 
     own_projects: Mapped[List["ProjectModel"]] = relationship(back_populates="owner")
-    positions_details: Mapped[List["UserPositionAssociation"]] = relationship(back_populates="user")
+    positions_details: Mapped[List["ApplicationModel"]] = relationship(back_populates="user")

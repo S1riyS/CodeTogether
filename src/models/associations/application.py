@@ -11,8 +11,8 @@ if TYPE_CHECKING:
     from models import UserModel, PositionModel
 
 
-class UserPositionAssociation(Base, TimeModelMixin):
-    __tablename__ = 'participations'
+class ApplicationModel(Base, TimeModelMixin):
+    __tablename__ = 'applications'
     __table_args__ = (
         UniqueConstraint(
             "user_id",
@@ -24,6 +24,7 @@ class UserPositionAssociation(Base, TimeModelMixin):
     id: Mapped[UUID] = mapped_column(primary_key=True)
     user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'))
     position_id: Mapped[UUID] = mapped_column(ForeignKey('positions.id'))
+    message: Mapped[str]
     is_approved: Mapped[bool] = mapped_column(default=False)
 
     # Association between Association -> User

@@ -7,4 +7,4 @@ from models.position import PositionModel
 from models.user import UserModel
 
 # Associative models
-from models.associations import UserPositionAssociation
+from models.associations import ApplicationModel
