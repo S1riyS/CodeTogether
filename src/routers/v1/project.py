@@ -34,3 +34,13 @@ async def update(project_id: UUID, data: ProjectUpdateSchema, user: CurrentUserD
 async def delete(project_id: UUID, user: CurrentUserDep, session: SessionDep):
     project_service = ProjectService(session)
     return await project_service.delete(project_id, user.id)
+
+
+@router.post("/{project_id}/positions")
+async def add_position(project_id: UUID):
+    ...
+
+
+@router.get("/{project_id}/positions")
+async def get_positions(project_id: UUID):
+    ...
