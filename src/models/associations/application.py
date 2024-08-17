@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import TYPE_CHECKING
 from uuid import UUID
 
@@ -9,6 +10,12 @@ from models.utils.mixins import TimeModelMixin
 
 if TYPE_CHECKING:
     from models import UserModel, PositionModel
+
+
+class ApplicationStatus(Enum):
+    PENDING = 'PENDING'
+    APPROVED = 'APPROVED'
+    REJECTED = 'REJECTED'
 
 
 class ApplicationModel(Base, TimeModelMixin):
@@ -25,7 +32,10 @@ class ApplicationModel(Base, TimeModelMixin):
     user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'))
     position_id: Mapped[UUID] = mapped_column(ForeignKey('positions.id'))
     message: Mapped[str]
-    is_approved: Mapped[bool] = mapped_column(default=False)
+    status: Mapped[ApplicationStatus] = mapped_column(
+        default=ApplicationStatus.PENDING.value,
+        server_default=ApplicationStatus.PENDING.value
+    )
 
     # Association between Association -> User
     user: Mapped["UserModel"] = relationship(back_populates="positions_details")
