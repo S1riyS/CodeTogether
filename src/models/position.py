@@ -21,4 +21,4 @@ class PositionModel(Base, IDModelMixin):
     project_id: Mapped[UUID] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"))
 
     project: Mapped["ProjectModel"] = relationship(back_populates="positions")
-    users_details: Mapped[List["ApplicationModel"]] = relationship(back_populates="product")
+    users_details: Mapped[List["ApplicationModel"]] = relationship(back_populates="position")
