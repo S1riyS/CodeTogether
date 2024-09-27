@@ -18,7 +18,7 @@ sys.path.append(os.path.join(sys.path[0], 'src'))
 config = context.config
 
 section = config.config_ini_section
-config.set_section_option(section, "DB_URL", settings.db.db_url)
+config.set_section_option(section, "DB_URL", settings.db_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
