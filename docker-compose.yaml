@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    container_name: db_app
+    command: -p 1221
+    expose:
+      - 1221
+    env_file:
+      - .env
+    
+  
+  app:
+    build:
+      context: .
+    container_name: code_together_application
+    command: ["/app/scripts/app.sh"]
+    ports:
+      - 9999:8000
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
