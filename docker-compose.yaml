@@ -27,7 +27,7 @@ services:
     build:
       context: .
     container_name: code_together_application
-    command: [ "/app/scripts/app.sh" ]
+    command: [ "/app/scripts/app-entrypoint.sh" ]
     ports:
       - 9999:8000
     env_file:
