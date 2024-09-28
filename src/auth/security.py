@@ -4,7 +4,7 @@ from typing import Optional
 from jose import jwt
 from passlib.context import CryptContext
 
-from config import settings
+from settings import settings
 
 SECRET_KEY = settings.auth.secret_key
 ALGORITHM = settings.auth.algorithm
