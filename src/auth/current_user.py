@@ -1,26 +1,26 @@
 from typing import Optional
+from uuid import UUID
 
-from fastapi import HTTPException, Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt, JWTError
+from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from auth import security
 from core.database import get_async_session
 from models import UserModel
-from typing_ import IDType
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-async def _get_user(session: AsyncSession, id_: IDType) -> Optional[UserModel]:
+async def _get_user(session: AsyncSession, id_: UUID) -> Optional[UserModel]:
     """
     Retrieve a user from the database by their username.
 
     Args:
         session (AsyncSession): The database session.
-        id_ (IDType): The id of the user to retrieve.
+        id_ (UUID): The id of the user to retrieve.
 
     Returns:
         User: The user object if found, otherwise None.
@@ -50,7 +50,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: AsyncSe
     )
     try:
         payload = jwt.decode(token, security.SECRET_KEY, algorithms=[security.ALGORITHM])
-        user_id: IDType = payload.get("sub")
+        user_id: UUID = payload.get("sub")
         if user_id is None:
             raise credentials_exception
     except JWTError:

@@ -1,4 +1,5 @@
 from typing import Sequence
+from uuid import UUID
 
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,7 +13,6 @@ from schemas.application import (
     ApplicationUpdateSchema,
 )
 from services.position_service import PositionService
-from typing_ import IDType
 
 
 class ApplicationService:
@@ -20,7 +20,7 @@ class ApplicationService:
         self._repository = ApplicationRepository(session)
         self._position_service = PositionService(session)
 
-    async def create(self, position_id: IDType, data: ApplicationCreateSchema, user_id: IDType) -> ApplicationModel:
+    async def create(self, position_id: UUID, data: ApplicationCreateSchema, user_id: UUID) -> ApplicationModel:
         position = await self._position_service.get_by_id(position_id)
 
         owner = await self._position_service.get_project_owner(position.id)
@@ -53,14 +53,14 @@ class ApplicationService:
             )
         return new_application
 
-    async def _get_by_id(self, application_id: IDType) -> ApplicationModel:
+    async def _get_by_id(self, application_id: UUID) -> ApplicationModel:
         application = await self._repository.get_by_id(application_id)
         if application is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Application not found")
 
         return application
 
-    async def get_all_by_position_id(self, position_id: IDType, user_id: IDType) -> Sequence[ApplicationModel]:
+    async def get_all_by_position_id(self, position_id: UUID, user_id: UUID) -> Sequence[ApplicationModel]:
         position = await self._position_service.get_by_id(position_id)
         owner = await self._position_service.get_project_owner(position.id)
         if owner.id != user_id:
@@ -68,7 +68,7 @@ class ApplicationService:
 
         return await self._repository.get_all_by_position_id(position_id)
 
-    async def update(self, application_id: IDType, data: ApplicationUpdateSchema, user_id: IDType):
+    async def update(self, application_id: UUID, data: ApplicationUpdateSchema, user_id: UUID):
         application = await self._get_by_id(application_id)
         if application.user_id != user_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
@@ -80,14 +80,14 @@ class ApplicationService:
                 detail="Error while updating an application",
             )
 
-    async def delete(self, application_id: IDType, user_id: IDType) -> bool:
+    async def delete(self, application_id: UUID, user_id: UUID) -> bool:
         application = await self._get_by_id(application_id)
         if application.user_id != user_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
         return await self._repository.delete(application_id)
 
     async def __set_status(
-        self, application_id: IDType, new_status: ApplicationStatus, user_id: IDType
+        self, application_id: UUID, new_status: ApplicationStatus, user_id: UUID
     ) -> ApplicationModel:
         """
         Sets the status of an application.
@@ -119,7 +119,7 @@ class ApplicationService:
 
         return updated_application
 
-    async def approve(self, application_id: IDType, user_id: IDType) -> ApplicationModel:
+    async def approve(self, application_id: UUID, user_id: UUID) -> ApplicationModel:
         application = await self._get_by_id(application_id)
         position = await self._position_service.get_by_id(application.position_id)
 
@@ -135,5 +135,5 @@ class ApplicationService:
 
         return await self.__set_status(application_id, ApplicationStatus.APPROVED, user_id)
 
-    async def reject(self, application_id: IDType, user_id: IDType) -> ApplicationModel:
+    async def reject(self, application_id: UUID, user_id: UUID) -> ApplicationModel:
         return await self.__set_status(application_id, ApplicationStatus.REJECTED, user_id)

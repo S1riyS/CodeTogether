@@ -34,7 +34,7 @@ class UserRepository(BaseRepository[UserModel, UserCreateSchema, UserUpdateSchem
         user = await self.get_by_username(email)
         return user is not None
 
-    async def create(self, obj: UserCreateSchema) -> Optional[UserModel]:
+    async def create(self, obj: UserCreateSchema, **kwargs) -> Optional[UserModel]:
         # Replace password with hashed password
         user_dict = obj.dict()
         password = user_dict.pop("password")
@@ -52,4 +52,3 @@ class UserRepository(BaseRepository[UserModel, UserCreateSchema, UserUpdateSchem
         except IntegrityError:
             await self._session.rollback()
             return None
-

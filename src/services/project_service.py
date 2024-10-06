@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
@@ -5,14 +7,13 @@ from starlette import status
 from models import ProjectModel
 from repositories.project_repository import ProjectRepository
 from schemas.project import ProjectCreateSchema, ProjectUpdateSchema
-from typing_ import IDType
 
 
 class ProjectService:
     def __init__(self, session: AsyncSession):
         self._repository = ProjectRepository(session)
 
-    async def create(self, data: ProjectCreateSchema, user_id: IDType) -> ProjectModel:
+    async def create(self, data: ProjectCreateSchema, user_id: UUID) -> ProjectModel:
         new_project = await self._repository.create(data, owner_id=user_id)
         if new_project is None:
             raise HTTPException(
@@ -20,13 +21,13 @@ class ProjectService:
             )
         return new_project
 
-    async def get_by_id(self, project_id: IDType) -> ProjectModel:
+    async def get_by_id(self, project_id: UUID) -> ProjectModel:
         project = await self._repository.get_by_id(project_id)
         if project is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
         return project
 
-    async def update(self, project_id: IDType, data: ProjectUpdateSchema, user_id: IDType) -> ProjectModel:
+    async def update(self, project_id: UUID, data: ProjectUpdateSchema, user_id: UUID) -> ProjectModel:
         candidate = await self._repository.get_by_id(project_id)
         if not candidate:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
@@ -41,7 +42,7 @@ class ProjectService:
             )
         return updated_project
 
-    async def delete(self, project_id: IDType, user_id: IDType) -> bool:
+    async def delete(self, project_id: UUID, user_id: UUID) -> bool:
         candidate = await self._repository.get_by_id(project_id)
 
         if not candidate:
