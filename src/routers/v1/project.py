@@ -3,9 +3,9 @@ from uuid import UUID
 
 from fastapi import APIRouter
 
-from routers.depenencies import SessionDep, CurrentUserDep
+from routers.depenencies import CurrentUserDep, SessionDep
 from schemas.position import PositionCreateSchema, PositionSchema
-from schemas.project import ProjectSchema, ProjectCreateSchema, ProjectUpdateSchema
+from schemas.project import ProjectCreateSchema, ProjectSchema, ProjectUpdateSchema
 from services.position_service import PositionService
 from services.project_service import ProjectService
 
@@ -49,5 +49,5 @@ async def add_position(project_id: UUID, data: PositionCreateSchema, user: Curre
 @router.get("/{project_id}/positions", response_model=List[PositionSchema])
 async def get_positions(project_id: UUID, session: SessionDep):
     position_service = PositionService(session)
-    db_list = await position_service.get_by_project_id(project_id)
+    db_list = await position_service.get_all_by_project_id(project_id)
     return [PositionSchema.from_orm(position) for position in db_list]
