@@ -6,7 +6,7 @@ from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.database import Base
-from models.utils.mixins import TimeModelMixin
+from models.utils.mixins import TimeModelMixin, IDModelMixin
 
 if TYPE_CHECKING:
     from models import UserModel, PositionModel
@@ -18,7 +18,7 @@ class ApplicationStatus(Enum):
     REJECTED = 'REJECTED'
 
 
-class ApplicationModel(Base, TimeModelMixin):
+class ApplicationModel(Base, IDModelMixin, TimeModelMixin):
     __tablename__ = 'applications'
     __table_args__ = (
         UniqueConstraint(
@@ -28,7 +28,6 @@ class ApplicationModel(Base, TimeModelMixin):
         ),
     )
 
-    id: Mapped[UUID] = mapped_column(primary_key=True)
     user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'))
     position_id: Mapped[UUID] = mapped_column(ForeignKey('positions.id'))
     message: Mapped[str]
