@@ -1,10 +1,11 @@
 from abc import ABC
-from typing import Generic, Type, Optional
+from typing import Any, Dict, Generic, Optional, Type, Union
 
-from sqlalchemy.exc import IntegrityError, DatabaseError
+from fastapi.encoders import jsonable_encoder
+from sqlalchemy.exc import DatabaseError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from typing_ import ModelType, CreateSchemaType, UpdateSchemaType, IDType
+from typing_ import CreateSchemaType, IDType, ModelType, UpdateSchemaType
 
 
 class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType], ABC):
@@ -31,16 +32,27 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType], ABC
             await self._session.rollback()
             return None
 
-    async def update(self, id_: IDType, obj: UpdateSchemaType) -> Optional[ModelType]:
-        try:
-            db_obj = await self.get_by_id(id_)
-            for column, value in obj.dict(exclude_unset=True).items():
-                setattr(db_obj, column, value)
+    async def update(self, id_: IDType, obj_in: Union[UpdateSchemaType, Dict[str, Any]]) -> Optional[ModelType]:
+        db_obj = await self.get_by_id(id_)
+        # Check if exists
+        if db_obj:
+            obj_data = jsonable_encoder(db_obj)
+            if isinstance(obj_in, dict):
+                update_data = obj_in
+            else:
+                update_data = obj_in.dict(exclude_unset=True)
+
+            # Update the object
+            for field in obj_data:
+                if field in update_data:
+                    setattr(db_obj, field, update_data[field])
+
+            await self._session.flush()
+            await self._session.refresh(db_obj)
+
             await self._session.commit()
-            return db_obj
-        except DatabaseError:
-            await self._session.rollback()
-            return None
+
+        return db_obj
 
     async def delete(self, id_: IDType) -> bool:
         try:
