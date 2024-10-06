@@ -1,4 +1,5 @@
 from typing import Optional, Sequence
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.exc import DatabaseError
@@ -8,14 +9,13 @@ from models import ApplicationModel
 from models.associations.application import ApplicationStatus
 from repositories._base import BaseRepository
 from schemas.application import ApplicationCreateSchema, ApplicationUpdateSchema
-from typing_ import IDType
 
 
 class ApplicationRepository(BaseRepository[ApplicationModel, ApplicationCreateSchema, ApplicationUpdateSchema]):
     def __init__(self, session: AsyncSession):
         super().__init__(session, ApplicationModel)
 
-    async def get_all_by_position_id(self, position_id: IDType) -> Sequence[ApplicationModel]:
+    async def get_all_by_position_id(self, position_id: UUID) -> Sequence[ApplicationModel]:
         """
         Retrieves all applications associated with the given position ID.
 
@@ -27,7 +27,7 @@ class ApplicationRepository(BaseRepository[ApplicationModel, ApplicationCreateSc
         return result.scalars().all()
 
     async def get_all_by_position_id_and_status(
-        self, position_id: IDType, status: ApplicationStatus
+        self, position_id: UUID, status: ApplicationStatus
     ) -> Sequence[ApplicationModel]:
         """
         Retrieves all applications associated with the given position ID and status.

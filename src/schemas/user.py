@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
-from schemas.utils.decorators import omit
+from schemas.utils.decorators import omit, pick
 from schemas.utils.mixins import IDSchemaMixin
 
 
@@ -14,17 +14,15 @@ class _BaseUserSchema(IDSchemaMixin, BaseModel):
     is_verified: bool = False
 
 
-@omit('password')
+@omit("password")
 class UserSchema(_BaseUserSchema):
     class Config:
         from_attributes = True
 
 
-@omit('id', 'avatar_url', 'is_verified')
-class UserCreateSchema(_BaseUserSchema):
-    ...
+@pick("email", "username", "password")
+class UserCreateSchema(_BaseUserSchema): ...
 
 
-@omit('id', 'email', 'password', 'is_verified')
-class UserUpdateSchema(_BaseUserSchema):
-    ...
+@pick("email", "username")
+class UserUpdateSchema(_BaseUserSchema): ...

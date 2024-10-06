@@ -1,4 +1,5 @@
 from typing import Sequence
+from uuid import UUID
 
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,7 +10,6 @@ from models.associations.application import ApplicationStatus
 from repositories.position_repository import PositionRepository
 from schemas.position import PositionCreateSchema, PositionUpdateSchema
 from services.project_service import ProjectService
-from typing_ import IDType
 
 
 class PositionService:
@@ -17,7 +17,7 @@ class PositionService:
         self._repository = PositionRepository(session)
         self._project_service = ProjectService(session)
 
-    async def create(self, project_id: IDType, data: PositionCreateSchema, user_id: IDType) -> PositionModel:
+    async def create(self, project_id: UUID, data: PositionCreateSchema, user_id: UUID) -> PositionModel:
         await self.__check_project_ownership(project_id, user_id)
 
         new_position = await self._repository.create(data, project_id=project_id)
@@ -29,21 +29,21 @@ class PositionService:
 
         return new_position
 
-    async def get_by_id(self, id_: IDType) -> PositionModel:
-        position = await self._repository.get_by_id(id_)
+    async def get_by_id(self, position_id: UUID) -> PositionModel:
+        position = await self._repository.get_by_id(position_id)
         if position is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Position not found")
 
         return position
 
-    async def get_all_by_project_id(self, project_id: IDType) -> Sequence[PositionModel]:
+    async def get_all_by_project_id(self, project_id: UUID) -> Sequence[PositionModel]:
         return await self._repository.get_by_project_id(project_id)
 
-    async def update(self, id_: IDType, data: PositionUpdateSchema, user_id: IDType):
-        position = await self.get_by_id(id_)
+    async def update(self, position_id: UUID, data: PositionUpdateSchema, user_id: UUID):
+        position = await self.get_by_id(position_id)
         await self.__check_project_ownership(position.project_id, user_id)
 
-        updated_position = await self._repository.update(id_, data)
+        updated_position = await self._repository.update(position_id, data)
         if updated_position is None:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -51,14 +51,14 @@ class PositionService:
             )
         return updated_position
 
-    async def delete(self, id_: IDType, user_id: IDType) -> bool:
-        position = await self.get_by_id(id_)
+    async def delete(self, position_id: UUID, user_id: UUID) -> bool:
+        position = await self.get_by_id(position_id)
         await self.__check_project_ownership(position.project_id, user_id)
 
-        return await self._repository.delete(id_)
+        return await self._repository.delete(position_id)
 
-    async def get_project_owner(self, id_: IDType) -> UserModel:
-        owner = await self._repository.get_project_owner(id_)
+    async def get_project_owner(self, position_id: UUID) -> UserModel:
+        owner = await self._repository.get_project_owner(position_id)
         if owner is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -66,13 +66,13 @@ class PositionService:
             )
         return owner
 
-    async def check_if_user_alerady_applied(self, position_id: IDType, user_id: IDType) -> bool:
+    async def check_if_user_alerady_applied(self, position_id: UUID, user_id: UUID) -> bool:
         return await self._repository.check_if_user_alerady_applied(position_id, user_id)
 
-    async def get_count_of_applications_with_status(self, position_id: IDType, status: ApplicationStatus) -> int:
+    async def get_count_of_applications_with_status(self, position_id: UUID, status: ApplicationStatus) -> int:
         return await self._repository.get_count_of_applications_with_status(position_id, status)
 
-    async def __check_project_ownership(self, project_id: IDType, user_id: IDType) -> None:
+    async def __check_project_ownership(self, project_id: UUID, user_id: UUID) -> None:
         """
         Check if the provided user has ownership of the given project.
 

@@ -1,11 +1,12 @@
 from abc import ABC
 from typing import Any, Dict, Generic, Optional, Type, Union
+from uuid import UUID
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.exc import DatabaseError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from typing_ import CreateSchemaType, IDType, ModelType, UpdateSchemaType
+from typing_ import CreateSchemaType, ModelType, UpdateSchemaType
 
 
 class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType], ABC):
@@ -13,11 +14,11 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType], ABC
         self._session = session
         self._model = model
 
-    async def get_by_id(self, id_: IDType) -> Optional[ModelType]:
+    async def get_by_id(self, id_: UUID) -> Optional[ModelType]:
         obj = await self._session.get(self._model, id_)
         return obj
 
-    async def exists_by_id(self, id_: IDType) -> bool:
+    async def exists_by_id(self, id_: UUID) -> bool:
         obj = await self.get_by_id(id_)
         return obj is not None
 
@@ -32,7 +33,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType], ABC
             await self._session.rollback()
             return None
 
-    async def update(self, id_: IDType, obj_in: Union[UpdateSchemaType, Dict[str, Any]]) -> Optional[ModelType]:
+    async def update(self, id_: UUID, obj_in: Union[UpdateSchemaType, Dict[str, Any]]) -> Optional[ModelType]:
         db_obj = await self.get_by_id(id_)
         # Check if exists
         if db_obj:
@@ -54,7 +55,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType], ABC
 
         return db_obj
 
-    async def delete(self, id_: IDType) -> bool:
+    async def delete(self, id_: UUID) -> bool:
         try:
             db_obj = await self._session.get(self._model, id_)
             await self._session.delete(db_obj)
