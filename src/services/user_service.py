@@ -23,8 +23,8 @@ class UserService:
         validate_creation(new_user)
         return new_user
 
-    async def get_by_id(self, id_: IDType) -> UserModel:
-        user = await self._repository.get_by_id(id_)
+    async def get_by_id(self, user_id: IDType) -> UserModel:
+        user = await self._repository.get_by_id(user_id)
         if user is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         return user
@@ -35,15 +35,15 @@ class UserService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         return user
 
-    async def update(self, id_: IDType, data: UserUpdateSchema) -> UserModel:
-        if not await self._repository.exists_by_id(id_):
+    async def update(self, user_id: IDType, data: UserUpdateSchema) -> UserModel:
+        if not await self._repository.exists_by_id(user_id):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
-        updated_user = await self._repository.update(id_, data)
+        updated_user = await self._repository.update(user_id, data)
         validate_update(updated_user)
         return updated_user
 
-    async def delete(self, id_: IDType) -> bool:
-        if not await self._repository.exists_by_id(id_):
+    async def delete(self, user_id: IDType) -> bool:
+        if not await self._repository.exists_by_id(user_id):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-        return await self._repository.delete(id_)
+        return await self._repository.delete(user_id)

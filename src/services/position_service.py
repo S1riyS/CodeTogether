@@ -29,8 +29,8 @@ class PositionService:
 
         return new_position
 
-    async def get_by_id(self, id_: IDType) -> PositionModel:
-        position = await self._repository.get_by_id(id_)
+    async def get_by_id(self, position_id: IDType) -> PositionModel:
+        position = await self._repository.get_by_id(position_id)
         if position is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Position not found")
 
@@ -39,11 +39,11 @@ class PositionService:
     async def get_all_by_project_id(self, project_id: IDType) -> Sequence[PositionModel]:
         return await self._repository.get_by_project_id(project_id)
 
-    async def update(self, id_: IDType, data: PositionUpdateSchema, user_id: IDType):
-        position = await self.get_by_id(id_)
+    async def update(self, position_id: IDType, data: PositionUpdateSchema, user_id: IDType):
+        position = await self.get_by_id(position_id)
         await self.__check_project_ownership(position.project_id, user_id)
 
-        updated_position = await self._repository.update(id_, data)
+        updated_position = await self._repository.update(position_id, data)
         if updated_position is None:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -51,14 +51,14 @@ class PositionService:
             )
         return updated_position
 
-    async def delete(self, id_: IDType, user_id: IDType) -> bool:
-        position = await self.get_by_id(id_)
+    async def delete(self, position_id: IDType, user_id: IDType) -> bool:
+        position = await self.get_by_id(position_id)
         await self.__check_project_ownership(position.project_id, user_id)
 
-        return await self._repository.delete(id_)
+        return await self._repository.delete(position_id)
 
-    async def get_project_owner(self, id_: IDType) -> UserModel:
-        owner = await self._repository.get_project_owner(id_)
+    async def get_project_owner(self, position_id: IDType) -> UserModel:
+        owner = await self._repository.get_project_owner(position_id)
         if owner is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
