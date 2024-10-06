@@ -1,5 +1,4 @@
-from typing import TypeAlias, TypeVar
-from uuid import UUID
+from typing import TypeVar
 
 from pydantic import BaseModel
 
