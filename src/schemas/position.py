@@ -14,17 +14,15 @@ class _BasePositionSchema(IDSchemaMixin, BaseModel):
     project_id: UUID
 
 
-@omit('project_id')
+@omit("project_id")
 class PositionSchema(_BasePositionSchema):
     class Config:
         from_attributes = True
 
 
-@omit('id', 'project_id')
-class PositionCreateSchema(_BasePositionSchema):
-    ...
+@omit("id", "project_id")
+class PositionCreateSchema(_BasePositionSchema): ...
 
 
-@omit('id', 'project_id')
-class PositionUpdateSchema(_BasePositionSchema):
-    ...
+@omit("id", "project_id")
+class PositionUpdateSchema(_BasePositionSchema): ...

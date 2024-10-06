@@ -1,10 +1,11 @@
-from typing import List, Sequence
+from typing import Sequence
 
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from models import PositionModel
+from models import PositionModel, UserModel
+from models.associations.application import ApplicationStatus
 from repositories.position_repository import PositionRepository
 from schemas.position import PositionCreateSchema, PositionUpdateSchema
 from services.project_service import ProjectService
@@ -23,7 +24,7 @@ class PositionService:
         if new_position is None:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Error while creating a position"
+                detail="Error while creating a position",
             )
 
         return new_position
@@ -32,9 +33,10 @@ class PositionService:
         position = await self._repository.get_by_id(id_)
         if position is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Position not found")
+
         return position
 
-    async def get_by_project_id(self, project_id: IDType) -> Sequence[PositionModel]:
+    async def get_all_by_project_id(self, project_id: IDType) -> Sequence[PositionModel]:
         return await self._repository.get_by_project_id(project_id)
 
     async def update(self, id_: IDType, data: PositionUpdateSchema, user_id: IDType):
@@ -45,7 +47,7 @@ class PositionService:
         if updated_position is None:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Error while updating a position"
+                detail="Error while updating a position",
             )
         return updated_position
 
@@ -54,6 +56,21 @@ class PositionService:
         await self.__check_project_ownership(position.project_id, user_id)
 
         return await self._repository.delete(id_)
+
+    async def get_project_owner(self, id_: IDType) -> UserModel:
+        owner = await self._repository.get_project_owner(id_)
+        if owner is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Owner of project not found",
+            )
+        return owner
+
+    async def check_if_user_alerady_applied(self, position_id: IDType, user_id: IDType) -> bool:
+        return await self._repository.check_if_user_alerady_applied(position_id, user_id)
+
+    async def get_count_of_applications_with_status(self, position_id: IDType, status: ApplicationStatus) -> int:
+        return await self._repository.get_count_of_applications_with_status(position_id, status)
 
     async def __check_project_ownership(self, project_id: IDType, user_id: IDType) -> None:
         """
