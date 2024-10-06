@@ -3,7 +3,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 from models.project import Difficulty
-from schemas.utils.decorators import omit
+from schemas.utils.decorators import omit, pick
 from schemas.utils.mixins import IDSchemaMixin, TimeSchemaMixin
 
 
@@ -19,11 +19,9 @@ class ProjectSchema(_BaseProjectSchema):
         from_attributes = True
 
 
-@omit('id', 'created_at', 'updated_at', 'owner_id')
-class ProjectCreateSchema(_BaseProjectSchema):
-    ...
+@pick("name", "description", "difficulty")
+class ProjectCreateSchema(_BaseProjectSchema): ...
 
 
-@omit('id', 'created_at', 'updated_at', 'owner_id')
-class ProjectUpdateSchema(_BaseProjectSchema):
-    ...
+@pick("name", "description", "difficulty")
+class ProjectUpdateSchema(_BaseProjectSchema): ...
