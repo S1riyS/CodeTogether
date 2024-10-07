@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from models.associations.application import ApplicationStatus
 from schemas.utils.decorators import pick
@@ -17,8 +17,7 @@ class _BaseApplicationSchema(IDSchemaMixin, TimeSchemaMixin, BaseModel):
 
 
 class ApplicationSchema(_BaseApplicationSchema):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 @pick("message")
