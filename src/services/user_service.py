@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -30,11 +31,8 @@ class UserService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         return user
 
-    async def get_by_email(self, email: str) -> UserModel:
-        user = await self._repository.get_by_email(email)
-        if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-        return user
+    async def get_by_email(self, email: str) -> Optional[UserModel]:
+        return await self._repository.get_by_email(email)
 
     async def update(self, user_id: UUID, data: UserUpdateSchema) -> UserModel:
         if not await self._repository.exists_by_id(user_id):
