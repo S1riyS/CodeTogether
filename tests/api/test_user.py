@@ -21,9 +21,7 @@ async def test_get_me(
 
 async def test_update_me(async_client: AsyncClient, session: AsyncSession):
     user = await create_new_user(session)
-    print("Created")
     token_headers = await authentication_token_from_email(async_client=async_client, session=session, email=user.email)
-    print("After tokesn")
 
     new_username = "new_username"
     response = await async_client.put("/api/v1/users/me", headers=token_headers, json={"username": new_username})
