@@ -21,7 +21,8 @@ async def update_application(
 @router.delete("/{application_id}", response_model=DeleteResponseSchema)
 async def delete_application(application_id: UUID, user: CurrentUserDep, session: SessionDep):
     application_service = ApplicationService(session)
-    return await application_service.delete(application_id, user.id)
+    result = await application_service.delete(application_id, user.id)
+    return DeleteResponseSchema(success=result)
 
 
 @router.post("/{application_id}/approved", response_model=ApplicationSchema)
