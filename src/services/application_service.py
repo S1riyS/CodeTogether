@@ -7,11 +7,7 @@ from starlette import status
 
 from models.associations.application import ApplicationModel, ApplicationStatus
 from repositories.application_repository import ApplicationRepository
-from schemas.application import (
-    ApplicationCreateSchema,
-    ApplicationSchema,
-    ApplicationUpdateSchema,
-)
+from schemas.application import ApplicationCreateSchema, ApplicationUpdateSchema
 from services.position_service import PositionService
 
 
@@ -79,6 +75,7 @@ class ApplicationService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Error while updating an application",
             )
+        return updated_application
 
     async def delete(self, application_id: UUID, user_id: UUID) -> bool:
         application = await self._get_by_id(application_id)
