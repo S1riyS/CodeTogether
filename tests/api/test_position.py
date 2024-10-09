@@ -65,14 +65,7 @@ async def test_any_user_can_retrieve_positions(async_client: AsyncClient, sessio
     for _ in range(POSITIONS_COUNT):
         await create_new_position(session, project)
 
-    another_user = await create_new_user(session)
-    another_user_token_headers = await authentication_token_from_email(
-        async_client=async_client,
-        session=session,
-        email=another_user.email,
-    )
-
-    response = await async_client.get(f"/api/v1/projects/{project.id}/positions", headers=another_user_token_headers)
+    response = await async_client.get(f"/api/v1/projects/{project.id}/positions")
     assert response.status_code == 200
 
     content = response.json()
