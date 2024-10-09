@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from schemas.utils.decorators import omit
 from schemas.utils.mixins import IDSchemaMixin
@@ -16,8 +16,7 @@ class _BasePositionSchema(IDSchemaMixin, BaseModel):
 
 @omit("project_id")
 class PositionSchema(_BasePositionSchema):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 @omit("id", "project_id")

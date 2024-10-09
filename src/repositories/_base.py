@@ -23,7 +23,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType], ABC
         return obj is not None
 
     async def create(self, obj: CreateSchemaType, **kwargs) -> Optional[ModelType]:
-        db_obj: ModelType = self._model(**obj.dict(), **kwargs)
+        db_obj: ModelType = self._model(**obj.model_dump(), **kwargs)
         self._session.add(db_obj)
 
         try:
@@ -41,7 +41,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType], ABC
             if isinstance(obj_in, dict):
                 update_data = obj_in
             else:
-                update_data = obj_in.dict(exclude_unset=True)
+                update_data = obj_in.model_dump(exclude_unset=True)
 
             # Update the object
             for field in obj_data:

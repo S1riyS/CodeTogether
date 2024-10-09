@@ -36,7 +36,7 @@ class UserRepository(BaseRepository[UserModel, UserCreateSchema, UserUpdateSchem
 
     async def create(self, obj: UserCreateSchema, **kwargs) -> Optional[UserModel]:
         # Replace password with hashed password
-        user_dict = obj.dict()
+        user_dict = obj.model_dump()
         password = user_dict.pop("password")
 
         user_dict["hashed_password"] = get_password_hash(password)

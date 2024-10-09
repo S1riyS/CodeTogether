@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from schemas.utils.decorators import omit, pick
 from schemas.utils.mixins import IDSchemaMixin
@@ -16,13 +16,12 @@ class _BaseUserSchema(IDSchemaMixin, BaseModel):
 
 @omit("password")
 class UserSchema(_BaseUserSchema):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 @pick("email", "username", "password")
 class UserCreateSchema(_BaseUserSchema): ...
 
 
-@pick("email", "username")
+@pick("username")
 class UserUpdateSchema(_BaseUserSchema): ...

@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from models.project import Difficulty
 from schemas.utils.decorators import omit, pick
@@ -15,8 +15,7 @@ class _BaseProjectSchema(IDSchemaMixin, TimeSchemaMixin, BaseModel):
 
 
 class ProjectSchema(_BaseProjectSchema):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 @pick("name", "description", "difficulty")
