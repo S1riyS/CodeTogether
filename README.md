@@ -3,7 +3,7 @@
 [//]: # (Project logo)
 <br/>
 <div align="center">
-    <a href="https://github.com/S1riyS/TutorHub-server">
+    <a href="https://github.com/S1riyS/CodeTogether">
         <img src="https://i.postimg.cc/d1fWF7wg/safeimagekit-330ea610973e8c3487667c3f4c5523c4-1-1.png" alt="Logo" width="140" height="140">
     </a>
     <h3 align="center">CodeTogether</h3>
